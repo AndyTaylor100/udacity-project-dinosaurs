@@ -22,17 +22,24 @@
 
     // Create Human Object
     let human = {
-      Name: 'na',
-      Height: {
-        Feet: 0,
+      name: 'na',
+      height: {
+        feet: 0,
         inches: 0
       },
-      Weight: 0,
-      Diet: 'na'
+      weight: 0,
+      diet: 'na'
     };
 
     // Use IIFE to get human data from form
-
+    (function formData(){
+       human.name = document.getElementById("name").value;
+       human.height.feet = document.getElementById("feet").value;
+       human.height.inches = document.getElementById("inches").value;
+       human.weight = document.getElementById("weight").value;
+       human.diet = document.getElementById("diet").value;
+      }
+    )();
 
     // Create Dino Compare Method 1
     // NOTE: Weight in JSON file is in lbs, height in inches.
