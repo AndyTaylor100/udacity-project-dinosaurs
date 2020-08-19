@@ -9,7 +9,7 @@
 
       // Produces a random fact, but does not use the compare functions
       this.randomFact = function () {
-        const facts = [`Weight: ${this.weight} Ibs`, `Height: ${this.height} Inches`, `Diet: ${this.diet}`, this.fact];
+        const facts = [`Weight: ${this.weight} Ibs`, `Height: ${this.height} inches`, `Diet: ${this.diet}`, this.fact];
         return facts[Math.floor(Math.random() * facts.length)];
       };
     }
@@ -56,14 +56,14 @@
     // Create Dino Compare Method 1
     // Compare weight
     function compareWeight(dinoWeight) {
-      return `This dinosaur weighs ${dinoWeight}ibs and you weigh ${human.weight}ibs!`
+      return `This dinosaur weighs ${dinoWeight} Ibs and you weigh ${human.weight} Ibs!`
     }
 
     // Create Dino Compare Method 2
     // Compare height
     function compareHeight(dinoHeight) {
       const convertHeight = (human.height.feet*12) + (human.height.inches);
-      return `This dinosaur's height is ${dinoHeight}ins and your height it ${convertHeight}ins!`
+      return `This dinosaur's height is ${dinoHeight} inches and your height it ${convertHeight} inches!`
     }
 
     // Create Dino Compare Method 3
