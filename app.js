@@ -1,14 +1,16 @@
 
     // Create Dino Constructor
-    function Dino(species, image, weight, height, fact) {
+    function Dino(species, image, weight, height, diet, fact) {
       this.species = species;
       this.image = image;
       this.weight = weight;
       this.height = height;
+      this.diet = diet;
       this.fact = fact;
 
+      // Produces a random fact, but does not use the compare functions
       this.randomFact = function () {
-        const facts = [`Weight: ${this.weight} Ibs`, `Height: ${this.height} Inches`, this.fact];
+        const facts = [`Weight: ${this.weight} Ibs`, `Height: ${this.height} Inches`, `Diet: ${this.diet}`, this.fact];
         return facts[Math.floor(Math.random() * facts.length)];
       };
     }
@@ -26,6 +28,7 @@
               `./images/${i.species.toLowerCase()}.png`,
               i.weight,
               i.height,
+              i.diet,
               i.fact)
           });
         })
@@ -42,26 +45,33 @@
       diet: 'na'
     };
 
-    // Use IIFE to get human data from form
+    // Get and set human data from form
     function formData() {
        human.name = document.getElementById("name").value;
-       human.height.feet = document.getElementById("feet").value;
-       human.height.inches = document.getElementById("inches").value;
+       human.height.feet = parseInt(document.getElementById("feet").value, 10);
+       human.height.inches = parseInt(document.getElementById("inches").value, 10);
        human.weight = document.getElementById("weight").value;
        human.diet = document.getElementById("diet").value;
       }
 
     // Create Dino Compare Method 1
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
+    // Compare weight
+    function compareWeight(dinoWeight) {
+      return `This dinosaur weighs ${dinoWeight}ibs and you weigh ${human.weight}ibs!`
+    }
 
     // Create Dino Compare Method 2
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
+    // Compare height
+    function compareHeight(dinoHeight) {
+      const convertHeight = (human.height.feet*12) + (human.height.inches);
+      return `This dinosaur's height is ${dinoHeight}ins and your height it ${convertHeight}ins!`
+    }
 
     // Create Dino Compare Method 3
-    // NOTE: Weight in JSON file is in lbs, height in inches.
-
+    // Compare diet
+    function compareDiet(dinoDiet) {
+      return `This dinosaur is a ${dinoDiet}, and you are a ${human.diet}!`
+    }
 
     // Generate Tiles for each Dino in Array
     function createGrid (dinos) {
@@ -72,7 +82,7 @@
       const grid = document.getElementById("grid");
 
       // Create individual tiles
-      for(let i = 0; i < dinos.length + 1; i++) {
+      for(let i = 0; i < dinos.length; i++) {
         // Set up the dino and human variables
         let tileTitle;
         let tileImage;
@@ -84,10 +94,15 @@
           tileImageAlt = 'Image of a human being';
           tileParagraph = '';
         } else {
+          let randomFacts = [dinos[i].randomFact(),
+            compareWeight(dinos[i].weight),
+            compareHeight(dinos[i].height),
+            compareDiet(dinos[i].diet)];
+          randomFacts = randomFacts[Math.floor(Math.random() * randomFacts.length)];
           tileTitle = dinos[i].species;
           tileImage = dinos[i].image;
           tileImageAlt = `Image of a ${dinos[i].species}`;
-          tileParagraph = i === 8 ? dinos[i].fact :dinos[i].randomFact();
+          tileParagraph = i === 8 ? dinos[i].fact : randomFacts;
         }
 
         // Create the containing grid item div
@@ -117,18 +132,22 @@
       }
     }
 
-    // Remove form from screen
+    // Remove form from screen and fade in grid
     function removeForm() {
       const form = document.getElementById('dino-compare');
+      const grid = document.getElementById('grid');
       form.classList.add('animate__fadeOut', 'animate__faster');
-      setTimeout(() => {form.classList.add('display-none')}, 500);
+      setTimeout(() => {
+        form.classList.add('display-none');
+        grid.classList.remove('display-none')
+      }, 500);
     }
 
 
 // On button click, prepare and display infographic
     document.getElementById("btn").addEventListener("click", function(){
-      removeForm();
       formData();
+      removeForm();
       createDinos().then(result => {
         createGrid(result);
       });
