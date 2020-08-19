@@ -1,9 +1,16 @@
 
     // Create Dino Constructor
-    function Dino(species, image, fact) {
+    function Dino(species, image, weight, height, fact) {
       this.species = species;
       this.image = image;
+      this.weight = weight;
+      this.height = height;
       this.fact = fact;
+
+      this.randomFact = function () {
+        const facts = [`Weight: ${this.weight} Ibs`, `Height: ${this.height} Inches`, this.fact];
+        return facts[Math.floor(Math.random() * facts.length)];
+      };
     }
 
     // Create Dino Objects
@@ -14,7 +21,12 @@
         })
         .then(function(data) {
           return data.Dinos.map(function (i) {
-            return new Dino(i.species, `./images/${i.species.toLowerCase()}.png`, i.fact)
+            return new Dino(
+              i.species,
+              `./images/${i.species.toLowerCase()}.png`,
+              i.weight,
+              i.height,
+              i.fact)
           });
         })
     }
@@ -53,62 +65,69 @@
 
     // Generate Tiles for each Dino in Array
     function createGrid (dinos) {
+      // Add in the human tile
       dinos.splice(4, 0, human);
-      console.log(dinos);
+
+      // Store the grid
       const grid = document.getElementById("grid");
+
+      // Create individual tiles
       for(let i = 0; i < dinos.length + 1; i++) {
+        // Set up the dino and human variables
+        let tileTitle;
+        let tileImage;
+        let tileImageAlt;
+        let tileParagraph;
+        if(i === 4) {
+          tileTitle = human.name;
+          tileImage = './images/human.png';
+          tileImageAlt = 'Image of a human being';
+          tileParagraph = '';
+        } else {
+          tileTitle = dinos[i].species;
+          tileImage = dinos[i].image;
+          tileImageAlt = `Image of a ${dinos[i].species}`;
+          tileParagraph = i === 8 ? dinos[i].fact :dinos[i].randomFact();
+        }
+
         // Create the containing grid item div
         const gridItem = document.createElement("div");
         gridItem.classList.add("grid-item");
 
-        if(i === 4) {
-          // Create the h3 human name text and add to the gridItems
-          const title = document.createElement("h3");
-          const titleNode = document.createTextNode(human.name);
-          title.appendChild(titleNode);
-          gridItem.appendChild(title);
+        // Create the h3 human name text and add to the gridItems
+        const title = document.createElement("h3");
+        const titleNode = document.createTextNode(tileTitle);
+        title.appendChild(titleNode);
+        gridItem.appendChild(title);
 
-          // Create the image and add to the gridItems
-          const image = document.createElement("IMG");
-          image.setAttribute("src", "./images/human.png");
-          image.setAttribute("alt", `Image of a human`);
-          gridItem.appendChild(image);
+        // Create the image and add to the gridItems
+        const image = document.createElement("IMG");
+        image.setAttribute("src", tileImage);
+        image.setAttribute("alt", tileImageAlt);
+        gridItem.appendChild(image);
 
-        } else {
-          // Create the h3 species text and add to the gridItems
-          const title = document.createElement("h3");
-          const titleNode = document.createTextNode(dinos[i].species);
-          title.appendChild(titleNode);
-          gridItem.appendChild(title);
+        // Create the fact text and add to the gridItems
+        const paragraph = document.createElement("p");
+        const paragraphNode = document.createTextNode(tileParagraph);
+        paragraph.appendChild(paragraphNode);
+        gridItem.appendChild(paragraph);
 
-          // Create the image and add to the gridItems
-          const image = document.createElement("IMG");
-          image.setAttribute("src", dinos[i].image);
-          image.setAttribute("alt", `Image of a ${dinos[i].species}`);
-          gridItem.appendChild(image);
-
-          // Create the fact text and add to the gridItems
-          const paragraph = document.createElement("p");
-          const paragraphNode = document.createTextNode(dinos[i].fact);
-          paragraph.appendChild(paragraphNode);
-          gridItem.appendChild(paragraph);
-        }
-
-        // Append to the main grid
+        // Add tiles to DOM
         grid.appendChild(gridItem);
       }
     }
 
-
-
-
-        // Add tiles to DOM
-
     // Remove form from screen
+    function removeForm() {
+      const form = document.getElementById('dino-compare');
+      form.classList.add('animate__fadeOut', 'animate__faster');
+      setTimeout(() => {form.classList.add('display-none')}, 500);
+    }
 
 
 // On button click, prepare and display infographic
     document.getElementById("btn").addEventListener("click", function(){
+      removeForm();
       formData();
       createDinos().then(result => {
         createGrid(result);
